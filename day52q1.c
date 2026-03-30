@@ -8,7 +8,7 @@ struct Node {
     struct Node* right;
 };
 
-// Create new node
+// Create node
 struct Node* createNode(int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
@@ -18,34 +18,35 @@ struct Node* createNode(int value) {
 
 // Insert into BST
 struct Node* insert(struct Node* root, int value) {
-    if (root == NULL) {
-        return createNode(value);
-    }
+    if (root == NULL) return createNode(value);
 
-    if (value < root->data) {
+    if (value < root->data)
         root->left = insert(root->left, value);
-    } else if (value > root->data) {
+    else if (value > root->data)
         root->right = insert(root->right, value);
-    }
 
     return root;
 }
 
-// Search in BST (Iterative)
-struct Node* search(struct Node* root, int key) {
+// Find LCA in BST
+struct Node* LCA(struct Node* root, int n1, int n2) {
     while (root != NULL) {
-        if (root->data == key) {
-            return root;
-        } else if (key < root->data) {
+        // Both values smaller → go left
+        if (n1 < root->data && n2 < root->data)
             root = root->left;
-        } else {
+
+        // Both values greater → go right
+        else if (n1 > root->data && n2 > root->data)
             root = root->right;
-        }
+
+        // Split point → LCA found
+        else
+            return root;
     }
     return NULL;
 }
 
-// Inorder Traversal (for checking BST)
+// Inorder traversal
 void inorder(struct Node* root) {
     if (root != NULL) {
         inorder(root->left);
@@ -57,7 +58,7 @@ void inorder(struct Node* root) {
 // Main function
 int main() {
     struct Node* root = NULL;
-    int n, value, key;
+    int n, value, n1, n2;
 
     printf("Enter number of nodes: ");
     scanf("%d", &n);
@@ -71,16 +72,15 @@ int main() {
     printf("Inorder Traversal: ");
     inorder(root);
 
-    printf("\nEnter value to search: ");
-    scanf("%d", &key);
+    printf("\nEnter two nodes to find LCA: ");
+    scanf("%d %d", &n1, &n2);
 
-    struct Node* result = search(root, key);
+    struct Node* lca = LCA(root, n1, n2);
 
-    if (result != NULL) {
-        printf("Element %d found in BST\n", key);
-    } else {
-        printf("Element %d NOT found in BST\n", key);
-    }
+    if (lca != NULL)
+        printf("LCA of %d and %d is: %d\n", n1, n2, lca->data);
+    else
+        printf("LCA not found\n");
 
     return 0;
 }
